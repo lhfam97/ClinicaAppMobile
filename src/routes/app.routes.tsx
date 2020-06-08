@@ -37,7 +37,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Dashboard from '../pages/Dashboard';
 import CriarConsulta from '../pages/CriarConsulta';
-
+import ConsultaDetalhada from '../pages/ConsultaDetalhada';
+import RegistrarReceita from '../pages/RegistrarReceita';
 
 const App = createStackNavigator();
 
@@ -45,11 +46,15 @@ const AppRoutes: React.FC = () => (
   <App.Navigator
     screenOptions={{
       // headerShown: false,
-      cardStyle: { backgroundColor: '#66ffff' },
+      cardStyle: {
+        backgroundColor: '#000030'
+      },
     }}
   >
     <App.Screen name="Consultas" component={Dashboard} />
     <App.Screen name="CriarConsulta" component={CriarConsulta} />
+    <App.Screen name="ConsultaDetalhada" component={ConsultaDetalhada} />
+    <App.Screen name="RegistrarReceita" component={RegistrarReceita} />
   </App.Navigator>
 );
 

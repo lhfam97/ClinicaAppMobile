@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Image, SafeAreaView, FlatList, StyleSheet, Alert, TouchableOpacity, Picker } from 'react-native';
+import { View, Text, Image, SafeAreaView, FlatList, StyleSheet, Alert, TouchableOpacity, Picker } from 'react-native';
 import { useAuth } from '../../hooks/auth'
 import leticia from '../../assets/leticia.jpg'
 import api from '../../services/api';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
+import Button from '../../components/Button';
+import AsyncStorage from '@react-native-community/async-storage';
 
 interface Time {
-  time_date: string
+  time_date: string,
+  DoctorTime_id: string
 }
 interface Doctor {
   id: string,
@@ -25,11 +29,13 @@ const CriarConsulta: React.FC = () => {
   const [doctorTime, setDoctorTime] = useState<Time[]>([]);
   const [medicoSelecionado, setMedicoSelecionado] = useState<Doctor>({
     id: "1",
-    name: "A"
+    name: ""
   });
   const [timeSelecionado, setTimeSelecionado] = useState<Time>({
+    DoctorTime_id: "",
     time_date: ""
   });
+
 
   useEffect(() => {
     try {
@@ -45,27 +51,61 @@ const CriarConsulta: React.FC = () => {
     }
   }, [])
 
-  // useEffect(() => {
-  //   try {
-  //     api.get(`doctorTime/${medicoSelecionado.id}`).then((response) => {
-  //       setDoctorTime(response.data);
-  //       console.log(response.data)
-  //     })
-  //   }
-  //   catch (err) {
-  //     Alert.alert(
-  //       'Erro na autenticação',
-  //       'Ocorreu um error ao fazer login, cheque as credenciais.',
-  //     );
-  //   }
-  // }, [medicoSelecionado])
+  useEffect(() => {
+    try {
+      api.get(`doctorTime/${medicoSelecionado.id}`).then((response) => {
+        setDoctorTime(response.data);
+        // console.log(response.data)
+      })
+    }
+    catch (err) {
+      Alert.alert(
+        'Erro na autenticação',
+        'Ocorreu um error ao fazer login, cheque as credenciais.',
+      );
+    }
+  }, [medicoSelecionado])
+  async function algumaCoisa() {
+    try {
+      console.log(timeSelecionado.DoctorTime_id)
+      const response = await api.post('consulta', {
 
+        doctor_time_id: timeSelecionado.DoctorTime_id,
+        cobertura_id: 'f2e6ddb0-2df3-4d62-8883-df4a7065e48c',
+        patient_id: '057be026-41e0-4c52-bd03-ad9579edb082'
+      });
+      Alert.alert(
+        'Cadastro de Consulta realizado com sucesso!',
+        'Você ja pode visualiza-la na aplicação.',
+      );
+      navigation.goBack();
+    }
+    catch (err) {
+      console.log(err)
+      Alert.alert(
+        'Erro na cadastro de Consulta',
+        'Ocorreu um error ao fazer cadastro da consulta, tente novamente.',
+      );
+    }
+  }
+
+
+  function AjusteData(data) {
+    if (data === "") {
+      return data
+    }
+    const date = new Date(data);
+    const date_final = moment(date).format("DD/MM/YY hh:mm:ss");
+
+    return (date_final)
+    // return (`${dt}/${month}/${year}   ${hour}:${minute}`)
+  }
   // async function handleLikeRepository() {
   // }
   // useEffect(() => {
   //   try {
   //     api.get("consulta").then((response) => {
-  //       setConsultas(response.data)
+  //       setConsultas(response.data) 
   //     })
   //   }
   //   catch (err) {
@@ -81,6 +121,7 @@ const CriarConsulta: React.FC = () => {
   return (
     <>
       <View style={styles.container}>
+        <Text style={styles.cabecalho}>Selecione o médico e o horario para agendar sua consulta</Text>
         <Picker
           style={styles.pickerComponent}
           mode="dropdown"
@@ -90,6 +131,12 @@ const CriarConsulta: React.FC = () => {
             (value) => {
               setMedicoSelecionado(
                 value
+              )
+              setTimeSelecionado(
+                {
+                  DoctorTime_id: "",
+                  time_date: ""
+                }
               )
               // console.log(value)
 
@@ -123,10 +170,46 @@ const CriarConsulta: React.FC = () => {
           </Picker.Item> */}
         </Picker>
 
-        <Text>{medicoSelecionado.name}</Text>
+        <Text style={{ color: "#fff" }}>{medicoSelecionado.name}</Text>
 
+        <Picker
+          style={styles.pickerComponent}
+          itemStyle={styles.pickerItem}
+          mode="dropdown"
+          selectedValue={timeSelecionado}
+          // selectedValue={this.state.selected}
+          onValueChange={
+            (value) => {
+              setTimeSelecionado(
+                value
+              )
 
+              console.log(value)
+            }
+          }
+        >
+          <Picker.Item
+            label="Selecione o Horario" value="">
+
+          </Picker.Item>
+
+          {doctorTime.map((item, index) => {
+            return (
+
+              <Picker.Item label={AjusteData(item.time_date)} value={item} key={index} />
+              // < Picker.Item
+              //   label = { medico.name } value = { medico } >
+
+              // </Picker.Item>
+            )
+          })}
+
+        </Picker>
+        <Text style={{ color: "#fff" }}>{AjusteData(timeSelecionado.time_date)}</Text>
       </View>
+      <Button onPress={() => algumaCoisa()}>
+        Criar Consulta
+              </Button>
       {/* <SafeAreaView style={styles.container}>
         <FlatList
 
@@ -154,6 +237,7 @@ const styles = StyleSheet.create({
   container: {
 
     flex: 1,
+    alignItems: "center"
     // backgroundColor: "#7159c1",
   },
   repositoryContainer: {
@@ -180,7 +264,19 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   pickerComponent: {
+    backgroundColor: '#fff',
+    marginTop: 20,
     width: 350
+  },
+  pickerItem: {
+    backgroundColor: "grey", color: "blue"
+  },
+  cabecalho: {
+    fontSize: 24,
+    padding: 20,
+    marginTop: 50,
+    marginBottom: 80,
+    color: "#fff"
   }
 })
 

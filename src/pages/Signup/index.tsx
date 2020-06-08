@@ -110,7 +110,7 @@ const SignUp: React.FC = () => {
                 autoCapitalize="none"
                 name="crm"
                 icon="file-text"
-                placeholder="Crm"
+                placeholder="CRM"
                 returnKeyType="next"
                 onSubmitEditing={() => especialidadeInputRef.current.focus()}
               />

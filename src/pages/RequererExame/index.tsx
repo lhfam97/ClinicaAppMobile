@@ -15,7 +15,7 @@ import * as Yup from 'yup';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import InputGrande from '../../components/InputGrande';
-import Button from '../../components/Button'
+import Button from '../../components/Button';
 import { useNavigation } from '@react-navigation/native';
 import {
   Container,
@@ -26,20 +26,18 @@ import {
   CreateAccountButtonText,
 } from './styles';
 interface Consulta {
-  Consulta_id: string
-  patient_name: string,
-  doctor_name: string,
-  patient_cpf: string,
-  cobertura_name: string
-
+  Consulta_id: string;
+  patient_name: string;
+  doctor_name: string;
+  patient_cpf: string;
+  cobertura_name: string;
 }
-interface RegistroFormData {
+interface ExameFormData {
   consulta_id: string;
   descricao: string;
 }
 
-
-const RegistrarReceita: React.FC = ({ route }) => {
+const RequererExame: React.FC = ({ route }) => {
   const navigation = useNavigation();
   // const { consultaId } = route.params;
   // const [consultas, setConsultas] = useState<Consulta[]>([])
@@ -48,35 +46,30 @@ const RegistrarReceita: React.FC = ({ route }) => {
   const { consultaId } = route.params;
   const formRef = useRef<FormHandles>(null);
 
-  const handleSignIn = useCallback(
-    async (data: RegistroFormData) => {
-      try {
-        const schema = Yup.object().shape({
-          descricao: Yup.string().min(10, 'No mínimo 10 caracteres'),
-        });
+  const handleSignIn = useCallback(async (data: ExameFormData) => {
+    try {
+      const schema = Yup.object().shape({
+        descricao: Yup.string().min(10, 'No mínimo 10 caracteres'),
+      });
 
-        data.consulta_id = consultaId;
-        console.log(data);
-        await schema.validate(data, { abortEarly: false });
-        // console.log("Passou 1");
-        await api.post('/receitaMedica', data);
+      data.consulta_id = consultaId;
+      console.log(data);
+      await schema.validate(data, { abortEarly: false });
+      // console.log("Passou 1");
+      await api.post('/exames', data);
 
-        Alert.alert(
-          'Receita registrada com sucesso!',
-          'Você ja pode visualiza-la na aplicação.',
-        );
-        navigation.goBack();
-
-
-      } catch (err) {
-        Alert.alert(
-          'Erro na autenticação',
-          'Ocorreu um error ao fazer login, cheque as credenciais.',
-        );
-      }
-    },
-    [],
-  );
+      Alert.alert(
+        'Exame registrado com sucesso!',
+        'Você ja pode visualiza-la na aplicação.',
+      );
+      navigation.goBack();
+    } catch (err) {
+      Alert.alert(
+        'Erro na autenticação',
+        'Ocorreu um error ao fazer registro, cheque se o valor tem mais de 10 letras.',
+      );
+    }
+  }, []);
 
   return (
     <>
@@ -89,13 +82,11 @@ const RegistrarReceita: React.FC = ({ route }) => {
           contentContainerStyle={{ flex: 1 }}>
           <Container>
             <View>
-              <Title>RECEITA</Title>
+              <Title>EXAME</Title>
             </View>
 
             <Form onSubmit={handleSignIn} ref={formRef}>
-
               <InputGrande
-
                 autoCorrect={false}
                 autoCapitalize="none"
                 name="descricao"
@@ -106,18 +97,15 @@ const RegistrarReceita: React.FC = ({ route }) => {
               />
 
               <Button onPress={() => formRef.current.submitForm()}>
-                Registrar Receita
-      </Button>
+                Registrar Exame
+              </Button>
             </Form>
-
           </Container>
         </ScrollView>
       </KeyboardAvoidingView>
-
     </>
-  )
+  );
 };
-
 
 // return (
 //   <>
@@ -130,9 +118,4 @@ const RegistrarReceita: React.FC = ({ route }) => {
 // );
 // };
 
-export default RegistrarReceita;
-
-
-
-
-
+export default RequererExame;

@@ -63,10 +63,24 @@ const ConsultaDetalhada: React.FC = ({ route }) => {
         <CreateAccountButtonText>Criar uma consulta</CreateAccountButtonText>
       </CreateAccountButton> */}
       </View>
-      <Button onPress={() => signOut()}>Listar Receitas Médicas</Button>
-      <Button onPress={() => navigation.navigate("RegistrarReceita")}>Registrar Receitas Médicas</Button>
-      <Button>Listar Exames</Button>
-      <Button>Requerer Exames</Button>
+      <Button onPress={() => navigation.navigate("ReceitaMedica", {
+        consultaId: consultaId,
+        patient_name: patient_name,
+        doctor_name: doctor_name
+      })}>Listar Receitas Médicas</Button>
+      <Button onPress={() => navigation.navigate("RegistrarReceita", {
+        consultaId: consultaId
+      })}>Registrar Receitas Médicas</Button>
+      <Button onPress={() => navigation.navigate("Exame", {
+        consultaId: consultaId,
+        patient_name: patient_name,
+        doctor_name: doctor_name
+      })}>Listar Exames</Button>
+      {/* <Button onPress={() => signOut()}>Listar Exames</Button> */}
+      <Button onPress={() => navigation.navigate("RequererExame", {
+        consultaId: consultaId,
+
+      })}>Requerer Exames</Button>
 
     </>
   )

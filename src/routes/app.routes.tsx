@@ -39,7 +39,9 @@ import Dashboard from '../pages/Dashboard';
 import CriarConsulta from '../pages/CriarConsulta';
 import ConsultaDetalhada from '../pages/ConsultaDetalhada';
 import RegistrarReceita from '../pages/RegistrarReceita';
-
+import RequererExame from '../pages/RequererExame';
+import ReceitaMedica from '../pages/ReceitaMedica';
+import Exame from '../pages/Exame'
 const App = createStackNavigator();
 
 const AppRoutes: React.FC = () => (
@@ -55,6 +57,10 @@ const AppRoutes: React.FC = () => (
     <App.Screen name="CriarConsulta" component={CriarConsulta} />
     <App.Screen name="ConsultaDetalhada" component={ConsultaDetalhada} />
     <App.Screen name="RegistrarReceita" component={RegistrarReceita} />
+    <App.Screen name="RequererExame" component={RequererExame} />
+    <App.Screen name="ReceitaMedica" component={ReceitaMedica} />
+    <App.Screen name="Exame" component={Exame} />
+
   </App.Navigator>
 );
 
